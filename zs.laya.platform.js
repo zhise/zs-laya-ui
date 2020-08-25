@@ -2394,7 +2394,70 @@ window.zs.laya = window.zs.laya || {};
     Laya.ClassUtils.regClass("Zhise.NativeIconAdView", NativeIconAdView);
 
     /**-------------------------------------以下是误触动画控制-------------------------------------*/
-    class MistakenlyTouchCtrl extends Laya['Script']{constructor(){super();}['onAwake'](){var _0x5576c4={'luABZ':function(_0x3f3fd6,_0x5974bd){return _0x3f3fd6!=_0x5974bd;},'MMjQi':function(_0x2f8861,_0x57fec9){return _0x2f8861+_0x57fec9;},'ISNan':function(_0x5dc77e,_0x3e31f8){return _0x5dc77e<_0x3e31f8;},'OgzGA':'move','mifBs':function(_0x68d9d4,_0x2e48cf){return _0x68d9d4==_0x2e48cf;},'VEHdT':function(_0x2d17b0,_0x8cfffc){return _0x2d17b0==_0x8cfffc;},'PQoPg':'delay','sNIVs':function(_0x53da74,_0x530c5a){return _0x53da74>_0x530c5a;}};if(_0x5576c4['luABZ'](ADConfig['isPublicVersion'](),!![])){return;}var _0x530d83=this['owner']['url']['substring'](_0x5576c4['MMjQi'](this['owner']['url']['lastIndexOf']('/'),0x1),this['owner']['url']['lastIndexOf']('.'));var _0x4d539a=PlatformMgr['platformCfg']['mistakenlyTouchCfg'][_0x530d83];if(!_0x4d539a){return;}for(var _0x501dd5=0x0;_0x5576c4['ISNan'](_0x501dd5,_0x4d539a['length']);_0x501dd5++){const _0x1202c4=_0x4d539a[_0x501dd5];const _0x45b247=this['findChildByPath'](_0x1202c4['path']);var _0x358a22=_0x45b247['x'];var _0x362c49=_0x45b247['y'];if(ADConfig['zs_switch']){var _0x5993ad=_0x1202c4['showType']||_0x5576c4['OgzGA'];if(_0x5576c4['mifBs'](_0x5993ad,_0x5576c4['OgzGA'])&&ADConfig['zs_banner_vertical_enable']){_0x45b247['mouseEnabled']=![];_0x45b247['x']+=_0x1202c4['offsetX'];_0x45b247['y']+=_0x1202c4['offsetY'];this['owner']['timerOnce'](ADConfig['zs_banner_text_time'],this,this['moveBack'],[_0x358a22,_0x362c49,ADConfig['zs_banner_move_time'],_0x45b247],![]);}else if(_0x5576c4['VEHdT'](_0x5993ad,_0x5576c4['PQoPg'])&&ADConfig['zs_button_delay_switch']){_0x45b247['mouseEnabled']=![];_0x45b247['visible']=![];this['owner']['timerOnce'](ADConfig['zs_button_delay_time'],this,this['showObj'],[_0x45b247],![]);}else if(_0x5576c4['sNIVs'](ADConfig['zs_unmiss_text_time'],0x0)){_0x45b247['mouseEnabled']=![];_0x45b247['visible']=![];this['owner']['timerOnce'](ADConfig['zs_unmiss_text_time'],this,this['showObj'],[_0x45b247],![]);}}}}['moveBack'](_0x4c7833,_0x3d03a4,_0x6770a8,_0x330421){Laya['Tween']['to'](_0x330421,{'x':_0x4c7833,'y':_0x3d03a4},_0x6770a8,null,Laya['Handler']['create'](this,this['activeObj'],[_0x330421]));}['activeObj'](_0x29e09a){_0x29e09a['mouseEnabled']=!![];}['showObj'](_0x236b63){_0x236b63['visible']=!![];_0x236b63['mouseEnabled']=!![];}['findChildByPath'](_0x4316aa){var _0x27201b={'fVTQI':function(_0x38ca94,_0x347984){return _0x38ca94<_0x347984;}};var _0x50e8f5=_0x4316aa['split']('/');var _0x5581e6=this['owner'];for(var _0x441aec=0x0;_0x27201b['fVTQI'](_0x441aec,_0x50e8f5['length']);_0x441aec++){_0x5581e6=_0x5581e6['getChildByName'](_0x50e8f5[_0x441aec]);}return _0x5581e6;}}
+    class MistakenlyTouchCtrl extends Laya.Script {
+        constructor() {
+            super();
+        }
+
+        onAwake() {
+
+            if (ADConfig.isPublicVersion() != true) {
+                return;
+            }
+
+            var viewName = this.owner.url.substring(this.owner.url.lastIndexOf('/') + 1, this.owner.url.lastIndexOf('.'));
+            var configs = PlatformMgr.platformCfg.mistakenlyTouchCfg[viewName];
+            if (!configs) {
+                return;
+            }
+            for (var index = 0; index < configs.length; index++) {
+                const element = configs[index];
+                const child = this.findChildByPath(element.path);
+                var srcX = child.x;
+                var srcY = child.y;
+
+                if (ADConfig.zs_switch) {
+                    var showType = element.showType || "move";
+                    if (showType == "move" && ADConfig.zs_banner_vertical_enable) {
+                        child.mouseEnabled = false;
+                        child.x += element.offsetX;
+                        child.y += element.offsetY;
+                        this.owner.timerOnce(ADConfig.zs_banner_text_time, this, this.moveBack, [srcX, srcY, ADConfig.zs_banner_move_time, child], false);
+                    } else if (showType == "delay" && ADConfig.zs_button_delay_switch) {
+                        child.mouseEnabled = false;
+                        child.visible = false;
+                        this.owner.timerOnce(ADConfig.zs_button_delay_time, this, this.showObj, [child], false);
+                    } else if (ADConfig.zs_unmiss_text_time > 0) {
+                        child.mouseEnabled = false;
+                        child.visible = false;
+                        this.owner.timerOnce(ADConfig.zs_unmiss_text_time, this, this.showObj, [child], false);
+                    }
+                }
+            }
+        }
+
+        moveBack(srcX, srcY, duaration, obj) {
+            Laya.Tween.to(obj, { x: srcX, y: srcY }, duaration, null, Laya.Handler.create(this, this.activeObj, [obj]))
+        }
+
+        activeObj(obj) {
+            obj.mouseEnabled = true;
+        }
+
+        showObj(obj) {
+            obj.visible = true;
+            obj.mouseEnabled = true;
+        }
+
+        findChildByPath(path) {
+            var nodes = path.split("/");
+            var child = this.owner;
+            for (var index = 0; index < nodes.length; index++) {
+                child = child.getChildByName(nodes[index]);
+            }
+            return child;
+        }
+    }
     Laya.ILaya.regClass(MistakenlyTouchCtrl);
     Laya.ClassUtils.regClass("zs.laya.platform.MistakenlyTouchCtrl", MistakenlyTouchCtrl);
     Laya.ClassUtils.regClass("Zhise.MistakenlyTouchCtrl", MistakenlyTouchCtrl);
